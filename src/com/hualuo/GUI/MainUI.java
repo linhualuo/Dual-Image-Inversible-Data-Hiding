@@ -21,13 +21,27 @@ public class MainUI extends JFrame implements ActionListener {
 
     public static final String IMAGE_CMD = "选择图像";
 
-    public static final String PROCESS_CMD = "隐藏";
+    public static final String HIDE_CMD = "隐藏";
+
+    public static final String EXTRACT_CMD = "提取";
 
     private JButton imageBtn;
 
-    private JButton processBtn;
+    private JButton hideBtn;
+
+    private JButton extractBtn;
 
     private ImagePanel imagePanel;
+
+    /**
+     * 用户输入用于隐藏的文本
+     */
+    private JTextField inputText;
+
+    /**
+     * 提取出来的隐藏的文本
+     */
+    private JTextField outputText;
 
     // image
     private BufferedImage srcImage;
@@ -35,13 +49,19 @@ public class MainUI extends JFrame implements ActionListener {
     public MainUI() throws HeadlessException {
         setTitle("双图片信息隐藏1.0");
         imageBtn = new JButton(IMAGE_CMD);
-        processBtn = new JButton(PROCESS_CMD);
+        hideBtn = new JButton(HIDE_CMD);
+        extractBtn = new JButton(EXTRACT_CMD);
+        inputText = new JTextField("input", 10);
+        outputText = new JTextField("output",10);
 
         //buttons
         JPanel btnPanel = new JPanel();
-        btnPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        btnPanel.setLayout(new FlowLayout());
         btnPanel.add(imageBtn);
-        btnPanel.add(processBtn);
+        btnPanel.add(hideBtn);
+        btnPanel.add(inputText);
+        btnPanel.add(extractBtn);
+        btnPanel.add(outputText);
 
         //filters
         imagePanel = new ImagePanel();
@@ -55,7 +75,9 @@ public class MainUI extends JFrame implements ActionListener {
 
     private void setUpActionListener() {
         imageBtn.addActionListener(this);
-        processBtn.addActionListener(this);
+        hideBtn.addActionListener(this);
+        //提取的暂未设置
+        //something here...
     }
 
     @Override
@@ -100,7 +122,7 @@ public class MainUI extends JFrame implements ActionListener {
             imagePanel.repaint();
         }
 
-        else if (PROCESS_CMD.equals(e.getActionCommand())) {
+        else if (HIDE_CMD.equals(e.getActionCommand())) {
             imagePanel.process();
             imagePanel.repaint();
         }

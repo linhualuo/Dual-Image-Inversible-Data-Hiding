@@ -33,6 +33,14 @@ public class MainUI extends JFrame implements ActionListener {
 
     private ImagePanel imagePanel;
 
+    private ImagePanel destImage1;
+
+    private ImagePanel destImage2;
+
+    private int imageWidth;
+
+    private int imageHeight;
+
     /**
      * 用户输入用于隐藏的文本
      */
@@ -64,9 +72,21 @@ public class MainUI extends JFrame implements ActionListener {
         btnPanel.add(outputText);
 
         //filters
-        imagePanel = new ImagePanel();
+        imagePanel = new ImagePanel(new Dimension(400, 400));
+        destImage1 = new ImagePanel(new Dimension(400, 400));
+        destImage2 = new ImagePanel(new Dimension(400, 400));
+
+//        //右侧的JPanel，放置双图片
+//        JPanel rightJPanel = new JPanel();
+//        rightJPanel.setLayout(new FlowLayout());
+//        rightJPanel.add(imagePanel);
+//        rightJPanel.add(destImage1);
+//        rightJPanel.add(destImage2);
+
         getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(destImage1, BorderLayout.WEST);
         getContentPane().add(imagePanel, BorderLayout.CENTER);
+        getContentPane().add(destImage2, BorderLayout.EAST);
         getContentPane().add(btnPanel, BorderLayout.SOUTH);
 
         //setup listener
@@ -98,6 +118,11 @@ public class MainUI extends JFrame implements ActionListener {
                     srcImage = ImageIO.read(file);
                     imagePanel.setSourceImage(srcImage);
                     imagePanel.repaint();
+                    //tmp
+                    destImage1.setSourceImage(srcImage);
+                    destImage1.repaint();
+                    destImage2.setSourceImage(srcImage);
+                    destImage2.repaint();
                 }
             } catch (IOException el) {
                 el.printStackTrace();
@@ -115,16 +140,27 @@ public class MainUI extends JFrame implements ActionListener {
                     srcImage = ImageIO.read(file);
                     imagePanel.setSourceImage(srcImage);
                     imagePanel.repaint();
+                    //tmp
+                    destImage1.setSourceImage(srcImage);
+                    destImage1.repaint();
+                    destImage2.setSourceImage(srcImage);
+                    destImage2.repaint();
                 }
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
             imagePanel.repaint();
+            //tmp
+            destImage1.repaint();
+            destImage2.repaint();
         }
 
         else if (HIDE_CMD.equals(e.getActionCommand())) {
             imagePanel.process();
             imagePanel.repaint();
+            //tmp
+            destImage1.repaint();
+            destImage2.repaint();
         }
     }
 
@@ -137,8 +173,7 @@ public class MainUI extends JFrame implements ActionListener {
 
     public void openView() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setPreferredSize(new Dimension(800, 600));
-        pack();
+        setSize(1200, 500);
         setVisible(true);
     }
 }

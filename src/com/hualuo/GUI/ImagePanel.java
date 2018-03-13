@@ -17,7 +17,15 @@ public class ImagePanel extends JPanel {
 
     private BufferedImage destImage;
 
+    private int imageWidth;
+
+    private int imageHeight;
+
     public ImagePanel() {
+    }
+
+    public ImagePanel(Dimension dimension) {
+        setPreferredSize(dimension);
     }
 
     @Override
@@ -33,6 +41,8 @@ public class ImagePanel extends JPanel {
                         destImage.getWidth(),
                         destImage.getHeight(), null);
             }
+            imageWidth = sourceImage.getWidth();
+            imageHeight = sourceImage.getHeight();
         }
     }
 
@@ -54,5 +64,13 @@ public class ImagePanel extends JPanel {
 
     public void setDestImage(BufferedImage destImage) {
         this.destImage = destImage;
+    }
+
+    public int getImageWidth() {
+        return imageWidth;
+    }
+
+    public int getImageHeight() {
+        return imageHeight;
     }
 }

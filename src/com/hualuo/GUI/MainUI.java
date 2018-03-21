@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Swing UI 界面实现
@@ -140,6 +141,7 @@ public class MainUI extends JFrame implements ActionListener {
                 DecodeFilter decodeFilter = new DecodeFilter();
                 String message = decodeFilter.decode(destImagePanel1.getSourceImage(), destImagePanel2.getSourceImage());
                 outputText.setText(message);
+                imagePanel.setDestImage(decodeFilter.getSrc());
                 imagePanel.repaint();
                 destImagePanel1.repaint();
                 destImagePanel2.repaint();

@@ -57,6 +57,11 @@ public class MainUI extends JFrame implements ActionListener {
      */
     private JTextField outputText;
 
+    /**
+     * 用户自定义的k值，范围是[1, 3]
+     */
+    private JTextField textK;
+
     // image
     private BufferedImage srcImage;
 
@@ -67,6 +72,7 @@ public class MainUI extends JFrame implements ActionListener {
         extractBtn = new JButton(EXTRACT_CMD);
         inputText = new JTextField("input", 10);
         outputText = new JTextField("output",10);
+        textK = new JTextField("k值", 3);
 
         //buttons
         JPanel btnPanel = new JPanel();
@@ -76,6 +82,7 @@ public class MainUI extends JFrame implements ActionListener {
         btnPanel.add(inputText);
         btnPanel.add(extractBtn);
         btnPanel.add(outputText);
+        btnPanel.add(textK);
 
         //filters
         imagePanel = new ImagePanel(new Dimension(400, 400));
@@ -117,8 +124,9 @@ public class MainUI extends JFrame implements ActionListener {
                     imagePanel.setSourceImage(srcImage);
                     imagePanel.repaint();
                     String inputMessage = inputText.getText();
+                    String k = textK.getText();
                     HideFilter hideFilter = new HideFilter();
-                    List<BufferedImage> imageList = hideFilter.hide(imagePanel.getSourceImage(), inputMessage);
+                    List<BufferedImage> imageList = hideFilter.hide(imagePanel.getSourceImage(), inputMessage, k);
                     destImagePanel1.setSourceImage(imageList.get(0));
                     destImagePanel1.repaint();
                     destImagePanel2.setSourceImage(imageList.get(1));

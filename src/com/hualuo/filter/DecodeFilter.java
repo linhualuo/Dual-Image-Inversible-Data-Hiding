@@ -1,9 +1,8 @@
 package com.hualuo.filter;
 
-import com.hualuo.function.AbstractBufferedImageOp;
+import com.hualuo.util.AbstractBufferedImageOp;
 
 import java.awt.image.BufferedImage;
-import java.util.Map;
 
 /**
  * 双图片解密过滤器
@@ -87,7 +86,7 @@ public class DecodeFilter extends AbstractBufferedImageOp {
     }
 
     /**
-     * 恢复k，算法是Max(|x' - x''|)/2 - 1
+     * 恢复k，算法是Max(|x' - x''|)/2 + 1
      * @param inPixels1
      * @param inPixels2
      * @return
@@ -105,7 +104,7 @@ public class DecodeFilter extends AbstractBufferedImageOp {
                 }
             }
         }
-        return k / 2 - 1;
+        return k / 2 + 1;
     }
 
     /**

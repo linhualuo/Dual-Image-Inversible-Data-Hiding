@@ -1,4 +1,4 @@
-package com.hualuo.function;
+package com.hualuo.util;
 
 import java.awt.*;
 import java.awt.geom.Point2D;

@@ -100,6 +100,11 @@ public class HideFilter extends AbstractBufferedImageOp {
                         bMIndex++;
                     }
                     bMIndex += k;
+                    //经过这步bMIndex可能刚好把串的最后一位读取了
+                    if (bMIndex > lastIndex) {
+                        END_INDEX_PADOFF = 0;
+                        END_INDEX = index;
+                    }
                 } else if (cmp >= 0 && cmp < k){//隐藏信息的最后一个像素
                     StringBuilder tmpStr = new StringBuilder(binaryMessage.substring(bMIndex));
                     if (tmpStr.length() < k) {//最后的字符串长度小于k

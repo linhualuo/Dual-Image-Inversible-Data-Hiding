@@ -145,7 +145,8 @@ public class DecodeFilter extends AbstractBufferedImageOp {
                 }
             }
         }
-        return (int)Math.ceil(k / 2.0) + 1;
+//        return (int)Math.ceil(k / 2.0) + 1;
+        return (int)Math.ceil(Math.log(k) / Math.log(2)) + 1;
     }
 
     /**

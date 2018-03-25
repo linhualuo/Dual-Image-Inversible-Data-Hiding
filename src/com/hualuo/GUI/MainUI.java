@@ -160,6 +160,8 @@ public class MainUI extends JFrame implements ActionListener {
                 imagePanel.repaint();
                 destImagePanel1.repaint();
                 destImagePanel2.repaint();
+                HideFilter.END_INDEX = 0;
+                HideFilter.END_INDEX_PADOFF = 0;
                 System.out.println("提取结束");
             }
         }

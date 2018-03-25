@@ -32,6 +32,15 @@ public class AbstractBufferedImageOp implements BufferedImageOp{
         }
     }
 
+    /**
+     * 像素值越界处理函数
+     * @param c
+     * @return
+     */
+    public int clamp(int c) {
+        return c > 255 ? 255 : ((c < 0) ? 0 : c);
+    }
+
     @Override
     public BufferedImage filter(BufferedImage src, BufferedImage dest) {
         return null;

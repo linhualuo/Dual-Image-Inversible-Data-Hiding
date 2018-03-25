@@ -72,7 +72,7 @@ public class MainUI extends JFrame implements ActionListener {
         extractBtn = new JButton(EXTRACT_CMD);
         inputText = new JTextField("input", 10);
         outputText = new JTextField("output",10);
-        textK = new JTextField("k值", 3);
+        textK = new JTextField("3", 3);
 
         //buttons
         JPanel btnPanel = new JPanel();
@@ -102,7 +102,7 @@ public class MainUI extends JFrame implements ActionListener {
     private void setUpActionListener() {
         imageBtn.addActionListener(this);
         hideBtn.addActionListener(this);
-        //提取的暂未设置
+        extractBtn.addActionListener(this);
         //something here...
     }
 
@@ -123,14 +123,6 @@ public class MainUI extends JFrame implements ActionListener {
                     srcImage = ImageIO.read(file);
                     imagePanel.setSourceImage(srcImage);
                     imagePanel.repaint();
-                    String inputMessage = inputText.getText();
-                    String k = textK.getText();
-                    HideFilter hideFilter = new HideFilter();
-                    List<BufferedImage> imageList = hideFilter.hide(imagePanel.getSourceImage(), inputMessage, k);
-                    destImagePanel1.setSourceImage(imageList.get(0));
-                    destImagePanel1.repaint();
-                    destImagePanel2.setSourceImage(imageList.get(1));
-                    destImagePanel2.repaint();
                 }
             } catch (IOException e1) {
                 e1.printStackTrace();
@@ -141,11 +133,26 @@ public class MainUI extends JFrame implements ActionListener {
             destImagePanel2.repaint();
         }
 
-        //从两张图片中提取信息
+        //隐藏信息
         else if (HIDE_CMD.equals(e.getActionCommand())) {
+            System.out.println("开始隐藏");
+            String inputMessage = inputText.getText();
+            String k = textK.getText();
+            HideFilter hideFilter = new HideFilter();
+            List<BufferedImage> imageList = hideFilter.hide(imagePanel.getSourceImage(), inputMessage, k);
+            destImagePanel1.setSourceImage(imageList.get(0));
+            destImagePanel1.repaint();
+            destImagePanel2.setSourceImage(imageList.get(1));
+            destImagePanel2.repaint();
+            System.out.println("隐藏结束");
+        }
+
+        //从两张图片中提取信息
+        else if (EXTRACT_CMD.equals(e.getActionCommand())) {
             if (destImagePanel1 == null || destImagePanel2 == null) {
                 JOptionPane.showMessageDialog(this, "请先选择图片并进行隐藏操作");
             } else {
+                System.out.println("开始提取");
                 DecodeFilter decodeFilter = new DecodeFilter();
                 String message = decodeFilter.decode(destImagePanel1.getSourceImage(), destImagePanel2.getSourceImage());
                 outputText.setText(message);
@@ -153,6 +160,7 @@ public class MainUI extends JFrame implements ActionListener {
                 imagePanel.repaint();
                 destImagePanel1.repaint();
                 destImagePanel2.repaint();
+                System.out.println("提取结束");
             }
         }
     }

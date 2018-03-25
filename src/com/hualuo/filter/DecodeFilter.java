@@ -1,6 +1,7 @@
 package com.hualuo.filter;
 
 import com.hualuo.util.AbstractBufferedImageOp;
+import com.hualuo.util.StringUtils;
 
 import java.awt.image.BufferedImage;
 
@@ -26,6 +27,7 @@ public class DecodeFilter extends AbstractBufferedImageOp {
      * @return
      */
     public String decode(BufferedImage dest1, BufferedImage dest2) {
+        System.out.println("decode");
         int width = dest1.getWidth();
         int height = dest1.getHeight();
         BufferedImage tmp = createCompatibleDestImage(dest1, null);
@@ -48,33 +50,67 @@ public class DecodeFilter extends AbstractBufferedImageOp {
      * @return
      */
     private String decodePixels(int[] outPixels, int[] inPixels1, int[] inPixels2, int width, int height) {
+        System.out.println("像素提取");
         int k = 0;
         int d = 0;
-        int midRange = 0;
+        StringBuilder res = new StringBuilder();
+        int leftRange = 0;
         k = restoreK(inPixels1, inPixels2, width, height);
-        midRange = (int) Math.pow(2, k - 2);
+        System.out.println("The value of k is: " + k);
+        leftRange = (int) Math.pow(2, k - 2);
         int index = 0;
+        int endIndex = HideFilter.END_INDEX;
+        int endIndexPadoff = HideFilter.END_INDEX_PADOFF;
         for (int row = 0; row < height; row++) {
             for (int col = 0; col < width; col++) {
                 index = row * width + col;
-                if (inPixels1[index] == inPixels2[index] && isInRange(inPixels1[index], midRange)) {
+                if (inPixels1[index] == inPixels2[index] && isInRange(inPixels1[index], leftRange)) {
                     outPixels[index] = inPixels1[index];
-                } else {
-                    outPixels[index] = (int) Math.ceil((inPixels1[index] + inPixels2[index]) / 2);
+                    continue;
+                }
+                if (index > endIndex) {
+                    outPixels[index] = inPixels1[index];
+                    continue;
+                }
+                else {
+                    int ta = 0, tGray1 = 0, tGray2 = 0, targetGray = 0;
+                    //若为灰度图片，rgb的值都一样，a值为255
+                    ta = (inPixels1[index] >> 24) & 0xff;
+                    tGray1 = (inPixels1[index] >> 16) & 0xff;
+                    tGray2 = (inPixels2[index] >> 16) & 0xff;
+                    targetGray = (int) Math.ceil((tGray1 + tGray2) / 2.0);
+                    outPixels[index] = (ta << 24) | (clamp(targetGray) << 16) | clamp(targetGray) << 8 | clamp(targetGray);
+                    //恢复每个隐藏像素的隐藏信息
+                    d = (int)(2 * Math.abs(tGray1 - tGray2) +
+                            0.5 * SgnFunction(tGray1 - tGray2) - 0.5);
+
+                    //最后一个有隐藏数据的像素且有填充的情况
+                    if (index == endIndex && endIndexPadoff > 0) {
+                        res.append(StringUtils.getBinaryByK(d, k));
+                        if (d != Math.pow(2, k) - 1) {
+                            int deleteIndex = res.length() - endIndexPadoff;
+                            int endDelIndex = res.length();
+                            res.delete(deleteIndex, endDelIndex);
+                        }
+                        continue;
+                    }
+
+                    if (d == Math.pow(2, k) - 1) {
+                        res.append(StringUtils.getBinaryByK(d, k));
+                        res.append("0");//补0
+                    } else if (d == Math.pow(2, k)) {
+                        d--;
+                        res.append(StringUtils.getBinaryByK(d, k));
+                        res.append("1");//补1
+                    } else {//其余普通情况
+                        res.append(StringUtils.getBinaryByK(d, k));
+                    }
+
+
                 }
             }
         }
-
-        String res = "";
-        //d赋值未解决...
-        if (d < (int) Math.pow(2, k) - 1) {
-            res =  String.valueOf(d);
-        } else if (d == (int) Math.pow(2, k) - 1) {
-            res =  String.valueOf(d * 2);
-        } else if (d == (int) Math.pow(2, k)) {
-            res =  String.valueOf(d * 2 + 1);
-        }
-        return res;
+        return StringUtils.binaryToString(res.toString());
     }
 
     public BufferedImage getSrc() {
@@ -95,20 +131,25 @@ public class DecodeFilter extends AbstractBufferedImageOp {
         int k = 0;
         int cmp = 0;
         int index = 0;
+
         for (int row = 0; row < height; row++) {
             for (int col = 0; col < width; col++) {
                 index = row * width + col;
-                cmp = Math.abs(inPixels1[index] - inPixels2[index]);
+                int tr1 = 0, tr2 = 0;
+                //各自取出灰度值
+                tr1 = (inPixels1[index] >> 16) & 0xff;
+                tr2 = (inPixels2[index] >> 16) & 0xff;
+                cmp = Math.abs(tr1 - tr2);
                 if (cmp > k) {
                     k = cmp;
                 }
             }
         }
-        return k / 2 + 1;
+        return (int)Math.ceil(k / 2.0) + 1;
     }
 
     /**
-     * 判断某个像素是否在某范围
+     * 判断某个像素是否在某范围[0, range)或者(255 - range, 255]
      * @param pixel
      * @param range
      * @return
@@ -116,7 +157,7 @@ public class DecodeFilter extends AbstractBufferedImageOp {
     private boolean isInRange(int pixel, int range) {
         if (pixel >= 0 && pixel < range) {
             return true;
-        } else if (pixel > range && pixel <= 255) {
+        } else if (pixel > (255 - range) && pixel <= 255) {
             return true;
         } else {
             return false;
@@ -128,7 +169,7 @@ public class DecodeFilter extends AbstractBufferedImageOp {
      * @param num
      * @return
      */
-    private int Sgn(int num) {
+    private int SgnFunction(int num) {
         if (num >= 0) {
             return 1;
         } else {

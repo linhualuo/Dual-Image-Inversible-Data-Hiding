@@ -55,7 +55,7 @@ public class DecodeFilter extends AbstractBufferedImageOp {
         int d = 0;
         StringBuilder res = new StringBuilder();
         int leftRange = 0;
-        k = restoreK(inPixels1, inPixels2, width, height);
+        k = retK(inPixels1, inPixels2);
         System.out.println("The value of k is: " + k);
         leftRange = (int) Math.pow(2, k - 2);
         int index = 0;
@@ -176,5 +176,13 @@ public class DecodeFilter extends AbstractBufferedImageOp {
         } else {
             return -1;
         }
+    }
+
+    private int retK(int[] inPixels1, int[] inPixels2) {
+        int len = inPixels1.length;
+        int tb1 = 0, tb2 = 0;
+        tb1 = inPixels1[len - 1] & 0xff;
+        tb2 = inPixels2[len - 1] & 0xff;
+        return Math.abs(tb1 - tb2);
     }
 }

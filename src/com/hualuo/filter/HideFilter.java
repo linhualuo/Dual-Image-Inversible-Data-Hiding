@@ -155,6 +155,7 @@ public class HideFilter extends AbstractBufferedImageOp {
                 }
             }
         }
+        storeK(outPixels1, k);
     }
 
     /**
@@ -183,6 +184,20 @@ public class HideFilter extends AbstractBufferedImageOp {
         } else {
             return true;
         }
+    }
+
+    /**
+     * 存储k的值在目标像素矩阵的最后一位
+     * @param outPixels1
+     * @param k
+     */
+    private void storeK(int[] outPixels1, int k) {
+        int len = outPixels1.length;
+        int ta = 0, tb = 0;
+        ta = (outPixels1[len - 1] >> 24) & 0xff;
+        tb = outPixels1[len - 1] & 0xff;
+        tb -= k;
+        outPixels1[len - 1] = (ta << 24) | (tb << 16) | (tb << 8) | tb;
     }
 
 }

@@ -17,15 +17,16 @@ public class StringUtils {
         if (message == "" || message == null) {
             return "";
         }
-        StringBuilder sb = new StringBuilder();
-        char[] chars = message.toCharArray();
-        int len = chars.length;
-        for (int i = 0; i < len; ++i) {
-            sb.append(Integer.toBinaryString(chars[i]));
-            //sb.append((int)chars[i]);
-            //sb.append(" ");
-        }
-        return sb.toString();
+//        StringBuilder sb = new StringBuilder();
+//        char[] chars = message.toCharArray();
+//        int len = chars.length;
+//        for (int i = 0; i < len; ++i) {
+//            sb.append(Integer.toBinaryString(chars[i]));
+//            //sb.append((int)chars[i]);
+//            //sb.append(" ");
+//        }
+        return cnToUnicode(message);
+//        return sb.toString();
     }
 
     /**
@@ -34,16 +35,16 @@ public class StringUtils {
      * @return
      */
     public static String binaryToString(String message) {
-        StringBuilder sb = new StringBuilder();
+//        StringBuilder sb = new StringBuilder();
         int len = message.length();
-        if (len % 7 != 0) {
+        if (len % 16 != 0) {
             System.out.println("提取出来的不是标准长度");
         }
-        for (int i = 0; i < len; i += 7) {
-            int chin = Integer.parseInt(message.substring(i, i + 7), 2);
-            sb.append((char)chin);
-        }
-        return sb.toString();
+//        for (int i = 0; i < len; i += 7) {
+//            int chin = Integer.parseInt(message.substring(i, i + 7), 2);
+//            sb.append((char)chin);
+//        }
+        return unicodeToCn(message);
     }
 
     /**
@@ -89,6 +90,39 @@ public class StringUtils {
             }
         }
         return sb.toString();
+    }
+
+    private static String cnToUnicode(String message) {
+        char[] chars = message.toCharArray();
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < chars.length; ++i) {
+            stringBuilder.append(fixChar(Integer.toString(chars[i], 2), 16));
+        }
+        return stringBuilder.toString();
+    }
+
+    private static String unicodeToCn(String message) {
+        String[] strings = new String[message.length() / 16];
+        int index = 0;
+        for (int i = 0; i < strings.length; i++) {
+            strings[i] = message.substring(index, index + 16);
+            index += 16;
+        }
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < strings.length; ++i) {
+            stringBuilder.append((char)Integer.valueOf(strings[i], 2).intValue());
+        }
+        return stringBuilder.toString();
+    }
+
+    private static String fixChar(String str, int radix) {
+        int len = str.length();
+        StringBuilder stringBuilder = new StringBuilder();
+        while (radix - len++ > 0) {
+            stringBuilder.append("0");
+        }
+        stringBuilder.append(str);
+        return stringBuilder.toString();
     }
 
 }

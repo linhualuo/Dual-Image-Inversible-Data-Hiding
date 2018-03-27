@@ -55,12 +55,12 @@ public class DecodeFilter extends AbstractBufferedImageOp {
         int d = 0;
         StringBuilder res = new StringBuilder();
         int leftRange = 0;
-        k = retK(inPixels1, inPixels2);
+        k = getNumFromPixel(inPixels1, inPixels2, inPixels1.length - 1);
         System.out.println("The value of k is: " + k);
         leftRange = (int) Math.pow(2, k - 2);
         int index = 0;
         int endIndex = HideFilter.END_INDEX;
-        int endIndexPadoff = HideFilter.END_INDEX_PADOFF;
+        int endIndexPadoff = getNumFromPixel(inPixels1, inPixels2, inPixels1.length - 2);
         for (int row = 0; row < height; row++) {
             for (int col = 0; col < width; col++) {
                 index = row * width + col;
@@ -178,11 +178,17 @@ public class DecodeFilter extends AbstractBufferedImageOp {
         }
     }
 
-    private int retK(int[] inPixels1, int[] inPixels2) {
-        int len = inPixels1.length;
+    /**
+     * 从特定像素返回预先存好的值，包括k，endIndex, endIndexPadoff
+     * @param inPixels1
+     * @param inPixels2
+     * @param index
+     * @return
+     */
+    private int getNumFromPixel(int[] inPixels1, int[] inPixels2, int index) {
         int tb1 = 0, tb2 = 0;
-        tb1 = inPixels1[len - 1] & 0xff;
-        tb2 = inPixels2[len - 1] & 0xff;
+        tb1 = inPixels1[index] & 0xff;
+        tb2 = inPixels2[index] & 0xff;
         return Math.abs(tb1 - tb2);
     }
 }

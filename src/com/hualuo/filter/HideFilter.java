@@ -23,7 +23,7 @@ public class HideFilter extends AbstractBufferedImageOp {
     /**
      * 最后一个隐藏像素的填充量（填0），默认为0
      */
-    public static int END_INDEX_PADOFF;
+    private int END_INDEX_PADOFF;
 
     @Override
     public BufferedImage filter(BufferedImage src, BufferedImage dest) {
@@ -86,6 +86,7 @@ public class HideFilter extends AbstractBufferedImageOp {
         int cmp;
 
         int index = 0;
+        END_INDEX = 0;//清零这一位。
         for (int row = 0; row < height; row++) {
             for (int col = 0; col < width; col++) {
                 index = row * width + col;
@@ -155,7 +156,9 @@ public class HideFilter extends AbstractBufferedImageOp {
                 }
             }
         }
-        storeK(outPixels1, k);
+        //k的值存在最后一个像素
+        storeNumInPixel(outPixels1, outPixels1.length - 1, k);
+        storeNumInPixel(outPixels1, outPixels1.length - 2, END_INDEX_PADOFF);
     }
 
     /**
@@ -189,15 +192,15 @@ public class HideFilter extends AbstractBufferedImageOp {
     /**
      * 存储k的值在目标像素矩阵的最后一位
      * @param outPixels1
-     * @param k
+     * @param index 要存的目录
+     * @param num 要存的值
      */
-    private void storeK(int[] outPixels1, int k) {
-        int len = outPixels1.length;
+    private void storeNumInPixel(int[] outPixels1, int index, int num) {
         int ta = 0, tb = 0;
-        ta = (outPixels1[len - 1] >> 24) & 0xff;
-        tb = outPixels1[len - 1] & 0xff;
-        tb -= k;
-        outPixels1[len - 1] = (ta << 24) | (tb << 16) | (tb << 8) | tb;
+        ta = (outPixels1[index] >> 24) & 0xff;
+        tb = outPixels1[index] & 0xff;
+        tb -= num;
+        outPixels1[index] = (ta << 24) | (tb << 16) | (tb << 8) | tb;
     }
 
 }

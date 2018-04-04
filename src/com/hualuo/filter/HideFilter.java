@@ -56,6 +56,13 @@ public class HideFilter extends AbstractBufferedImageOp {
         imageList.add(dest1);
         imageList.add(dest2);
 
+        //计算两张图片的PSNR
+        double t1 = countPSNR(inpixels, outpixels1, width, height);
+        double t2 = countPSNR(inpixels, outpixels2, width, height);
+        System.out.println("图片1的PNSR：" + t1);
+        System.out.println("图片2的PNSR：" + t2);
+        System.out.println("平均PSNR：" + (t1 + t2)/2.0);
+
         return imageList;
     }
 
@@ -201,6 +208,32 @@ public class HideFilter extends AbstractBufferedImageOp {
         tb = outPixels1[index] & 0xff;
         tb -= num;
         outPixels1[index] = (ta << 24) | (tb << 16) | (tb << 8) | tb;
+    }
+
+    /**
+     * 计算两张图片的PSNR
+     * @param inPixels
+     * @param outPixels
+     * @param width
+     * @param height
+     */
+    private double countPSNR(int[] inPixels, int[]outPixels, int width, int height) {
+        double PSNR = 0;
+        int index = 0;
+        int t1 = 0, t2 = 0;
+        for (int row = 0; row < height; row++) {
+            for (int col = 0; col < width; col++) {
+                index = row * width + col;
+                t1 = inPixels[index] & 0xff;
+                t2 = outPixels[index] & 0xff;
+                double temp = Math.abs(t1 - t2);
+                PSNR += (temp * temp);
+            }
+        }
+        PSNR = 1.0 / (width * height) * PSNR;
+        PSNR = 255 * 255 / PSNR;
+        PSNR = 10 * Math.log10(PSNR);
+        return PSNR;
     }
 
 }
